@@ -1,0 +1,102 @@
+library(tidyverse)
+library(RColorBrewer)
+library(scatterplot3d)
+
+data <- ##data_file_name
+attach(data)
+View(data)
+
+
+## Assigning [TPA as a character] dataset
+data_char <- subset(data[c(1,3:13)])
+data_char <- as.data.frame(data_char)
+data_char <- na.omit(data_char)
+data_char$group <- factor(data_char$assay,
+                         levels = c("assay 1", "assay 2", "assay3", #etc))
+data_char$grouptwo <- factor(data_char$tpa,    
+                         levels = c("zero", "low", "high"))
+
+
+## Assigning [TPA as numeric] dataset
+data_num <- subset(data[c(2,3:13)])   
+data_num <- as.data.frame(data_num)
+data_num <- na.omit(data_num)
+data_num$group <- factor(data_num$assay,    
+                         levels = c("assay 1", "assay 2", "assay3", #etc))
+
+## Assigning Assay Names
+assay_names <- c(
+  `assay_1` = "Assay 1",
+  `old_name` = "Corrected Name",
+  `etc.` = "Etc."
+  )
+
+##Checking work
+glimpse(data_char)
+glimpse(data_num)
+
+
+##PART ONE: TPA as numeric (data_num)
+
+# faceted scatterplot, Copy/uL vs TPA concentration
+ggplot(data_num, aes(x=tpa, y=copy_ul, color=assay))+ 
+  geom_smooth() +
+  geom_point(color="black")+
+  labs(x="TPA Concentration", y="Copy/uL")+
+  facet_wrap(~group, labeller = as_labeller(assay_names))+
+  theme_bw()+
+  theme(aspect.ratio=3/5)+
+  scale_fill_brewer(palette = "Set2")+
+  theme(axis.text.x = element_text(size = 10))+
+  theme(axis.text.y = element_text(size = 11))+
+  theme(text=element_text(family="serif"))+
+  theme(legend.position="none")
+
+# Correlation data
+b <- data_num %>%
+  group_by(assay) %>%
+  summarize(cor=cor(x=tpa, y=copy_ul))
+
+
+##PART TWO: TPA as a character (data_char)
+
+#facet-wrapped by assay, tpa on x axis-- faceted col charts
+ggplot(data_char, aes(x=tpa, y=copy_ul, fill=tpa))+ 
+  geom_col(color="white") +
+  labs(x="TPA Concentration", y="Copy/uL")+
+  facet_wrap(~group, labeller = as_labeller(assay_names))+
+  theme_bw()+
+  theme(aspect.ratio=3/5)+
+  scale_fill_brewer(palette = "Set2")+
+  scale_x_discrete(labels = c('High','Low','Zero'))+
+  theme(axis.text.x = element_text(size = 10))+
+  theme(axis.text.y = element_text(size = 11))+
+  theme(legend.position="none")
+
+
+#assays along x axis (no faceting)-- grouped col chart
+ggplot(data_char, aes(x= group, y=copy_ul, fill=grouptwo))+ 
+  geom_col(color="white", position = "dodge", width = 0.8) +
+  labs(x="Assay", y="Copy/uL")+
+  theme_bw()+
+  theme(aspect.ratio=3/5)+
+  theme(axis.text.x = element_text(size = 10))+
+  theme(axis.text.y = element_text(size = 11))+
+  scale_x_discrete(labels = assay_names)+
+  theme(text=element_text(family="serif"))+
+  scale_fill_brewer(palette = "Set2")+
+  labs(fill= "[TPA]")
+  
+#facet-wrapped by assay, [tpa] on x axis-- faceted scatterplots (smooth line)
+ggplot(data_char, aes(x=tpa, y=copy_ul))+ 
+  geom_point() +
+  labs(x="TPA Concentration", y="Copy/uL")+
+  facet_wrap(~group, labeller = as_labeller(assay_names))+
+  theme_bw()+
+  theme(aspect.ratio=3/5)+
+  scale_fill_brewer(palette = "Set2")+
+  theme(axis.text.x = element_text(size = 10))+
+  theme(axis.text.y = element_text(size = 11))+
+  scale_x_discrete(labels = c('0.056','0.028','0'))+
+  theme(legend.position="none")
+
