@@ -1,6 +1,5 @@
 library(tidyverse)
 library(RColorBrewer)
-library(scatterplot3d)
 
 data <- ##data_file_name
 attach(data)
