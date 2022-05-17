@@ -1,5 +1,6 @@
 library(tidyverse)
 library(RColorBrewer)
+library(ggpubr)
 
 data <- ##data_file_name
 attach(data)
@@ -38,7 +39,7 @@ glimpse(data_num)
 ##PART ONE: TPA as numeric (data_num)
 
 # faceted scatterplot, Copy/uL vs TPA concentration
-ggplot(data_num, aes(x=tpa, y=copy_ul, color=assay))+ 
+ggplot(data_num, aes(x=tpa_num, y=copy_ul, color=assay))+ 
   geom_smooth() +
   geom_point(color="black")+
   labs(x="TPA Concentration", y="Copy/uL")+
@@ -49,18 +50,14 @@ ggplot(data_num, aes(x=tpa, y=copy_ul, color=assay))+
   theme(axis.text.x = element_text(size = 10))+
   theme(axis.text.y = element_text(size = 11))+
   theme(text=element_text(family="serif"))+
-  theme(legend.position="none")
-
-# Correlation data
-b <- data_num %>%
-  group_by(assay) %>%
-  summarize(cor=cor(x=tpa, y=copy_ul))
+  theme(legend.position="none")+
+  stat_cor(method="pearson", label.x=0, label.y=750)
 
 
 ##PART TWO: TPA as a character (data_char)
 
 #facet-wrapped by assay, tpa on x axis-- faceted col charts
-ggplot(data_char, aes(x=tpa, y=copy_ul, fill=tpa))+ 
+ggplot(data_char, aes(x=tpa_char, y=copy_ul, fill=tpa_char))+ 
   geom_col(color="white") +
   labs(x="TPA Concentration", y="Copy/uL")+
   facet_wrap(~group, labeller = as_labeller(assay_names))+
@@ -72,6 +69,8 @@ ggplot(data_char, aes(x=tpa, y=copy_ul, fill=tpa))+
   theme(axis.text.y = element_text(size = 11))+
   theme(legend.position="none")
 
+
+##RESULT: 
 
 #assays along x axis (no faceting)-- grouped col chart
 ggplot(data_char, aes(x= group, y=copy_ul, fill=grouptwo))+ 
@@ -87,7 +86,7 @@ ggplot(data_char, aes(x= group, y=copy_ul, fill=grouptwo))+
   labs(fill= "[TPA]")
   
 #facet-wrapped by assay, [tpa] on x axis-- faceted scatterplots (smooth line)
-ggplot(data_char, aes(x=tpa, y=copy_ul))+ 
+ggplot(data_char, aes(x=tpa_char, y=copy_ul))+ 
   geom_point() +
   labs(x="TPA Concentration", y="Copy/uL")+
   facet_wrap(~group, labeller = as_labeller(assay_names))+
