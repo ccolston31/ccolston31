@@ -69,9 +69,6 @@ ggplot(data_char, aes(x=tpa_char, y=copy_ul, fill=tpa_char))+
   theme(axis.text.y = element_text(size = 11))+
   theme(legend.position="none")
 
-
-##RESULT: 
-
 #assays along x axis (no faceting)-- grouped col chart
 ggplot(data_char, aes(x= group, y=copy_ul, fill=grouptwo))+ 
   geom_col(color="white", position = "dodge", width = 0.8) +
@@ -97,4 +94,16 @@ ggplot(data_char, aes(x=tpa_char, y=copy_ul))+
   theme(axis.text.y = element_text(size = 11))+
   scale_x_discrete(labels = c('0.056','0.028','0'))+
   theme(legend.position="none")
+  
+  
+  
+  ##RESULTS:
+![Plot 1](https://user-images.githubusercontent.com/103075455/168927810-ea1272ca-8b30-42c8-9eee-877a0c2c327f.png)
+
+![plot 2](https://user-images.githubusercontent.com/103075455/168927858-c588daa5-ead4-4537-9df3-58b1f2696efa.png)
+
+![plot 3](https://user-images.githubusercontent.com/103075455/168927862-20cd5af1-4164-4fe9-94bd-b3d208b4df47.png)
+
+![plot 4](https://user-images.githubusercontent.com/103075455/168927865-bb228c14-d28f-475b-80b8-bd987565c9f4.png)
+
 
